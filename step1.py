@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from util import prompt
 import os
 import re
 from jinja2 import Environment, FileSystemLoader
@@ -35,12 +36,6 @@ data_node_configs = {
         'memory_limit': '40Gi'
     }
 }
-
-def prompt(msg, regex):
-    result = input(msg)
-    if not re.match(regex, result):
-        raise ValueError(f"expect response to match the regex '{regex}'.")
-    return result
 
 def prompt_for_user_vars():
     context = {}

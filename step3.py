@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
+from util import prompt, base64, random_token
 import os
 import re
-from base64 import b64encode, urlsafe_b64encode
-base64 = lambda s: b64encode(s.encode()).decode()
 from jinja2 import Environment, FileSystemLoader
 
 dirname = os.path.dirname(__file__)
@@ -11,19 +10,6 @@ template_dir = os.path.join(dirname, 'templates')
 clusters_dir = os.path.join(dirname, 'clusters')
 jinja_env = Environment(loader=FileSystemLoader(template_dir))
 jinja_env.filters['b64encode'] = base64
-
-def prompt(msg, regex='.*', default=None, readFile=False):
-    result = input(msg)
-    if not result and default:
-        return default
-    if not re.match(regex, result):
-        raise ValueError(f"expect response to match the regex '{regex}'.")
-    if readFile:
-        with open(result, 'r') as file:
-            data=file.read()
-        return data
-    else:
-        return result
 
 def prompt_for_user_vars():
     context = {}
@@ -34,7 +20,7 @@ def prompt_for_user_vars():
     context['oauth_client_id'] = prompt('Enter the OAuth Client ID: ')
     context['oauth_client_secret'] = prompt('Enter the OAuth Client Secret: ')
     context['oauth_cookie_name'] = '_ghoauth'
-    context['oauth_cookie_secret'] = urlsafe_b64encode(os.urandom(16)).decode()
+    context['oauth_cookie_secret'] = random_token()
 
     context['ssl_crt'] = prompt('Enter the path to the SSL certificate: ', readFile=True)
     context['ssl_key'] = prompt('Enter the path to the SSL private key: ', readFile=True)

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
+from util import prompt, base64
 import os
 import re
 import subprocess
-from base64 import b64encode
-base64 = lambda s: b64encode(s.encode()).decode()
 from jinja2 import Environment, FileSystemLoader
 import shutil
 
@@ -13,14 +12,6 @@ template_dir = os.path.join(dirname, 'templates')
 clusters_dir = os.path.join(dirname, 'clusters')
 jinja_env = Environment(loader=FileSystemLoader(template_dir))
 jinja_env.filters['b64encode'] = base64
-
-def prompt(msg, regex='.*', default=None):
-    result = input(msg)
-    if not result and default:
-        return default
-    if not re.match(regex, result):
-        raise ValueError(f"expect response to match the regex '{regex}'.")
-    return result
 
 def check_cert_presence(cert_dir):
     files = ['ca.crt', 'ca.key', 'logstash.crt', 'logstash.key']
@@ -73,7 +64,7 @@ def gen_logstash_certs(cert_dir):
 def prompt_for_user_vars():
     context = {}
     context['namespace'] = prompt('Enter the same namespace from step 1: ',
-        '^[a-z][-a-z0-9]{1,19}$'')
+        '^[a-z][-a-z0-9]{1,19}$')
     context['logstash_beats_port'] = '8751'
     cert_dir = os.path.join(clusters_dir, context['namespace'], "step2", "self-signed-certs")
     gen_logstash_certs(cert_dir)
