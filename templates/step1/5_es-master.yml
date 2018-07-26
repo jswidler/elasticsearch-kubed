@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ namespace }}
+  name: elasticsearch-master
+  labels:
+    component: elasticsearch
+    role: master
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch
+      role: master
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        role: master
+    spec:
+
+      # spec.template.spec.initContainers
+      initContainers:
+        # Increase the default vm.max_map_count to 262144
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
+        - name: increase-the-vm-max-map-count
+          image: busybox
+          command: ['sysctl', '-w', 'vm.max_map_count=262144']
+          securityContext:
+            privileged: true
+
+      # spec.template.spec.containers
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport
+          livenessProbe:
+            tcpSocket:
+              port: transport
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 0.25
+            limits:
+              cpu: 1
+              memory: 1Gi
+
+          # spec.template.spec.containers[elasticsearch].env
+          env:
+            - name: discovery.zen.ping.unicast.hosts
+              value: "elasticsearch-master.{{ namespace }}.svc.cluster.local,elasticsearch.{{ namespace }}.svc.cluster.local"
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+
+            - name: discovery.zen.minimum_master_nodes
+              value: "2"
+            - name: node.master
+              value: "true"
+            - name: node.ingest
+              value: "false"
+            - name: node.data
+              value: "false"
+            - name: search.remote.connect
+              value: "false"
+
+            - name: cluster.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          # spec.template.spec.containers[elasticsearch].volumeMounts
+          volumeMounts:
+            - name: storage
+              mountPath: /usr/share/elasticsearch/data
+
+      # spec.template.spec.volumes
+      volumes:
+        - name: storage
+          emptyDir:
+            medium: ""

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: {{ namespace }}
+  name: kibana-oauth2-proxy-ingress
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    ingress.beta.kubernetes.io/health-check-path: "/ping"
+spec:
+  tls:
+    - secretName:  ssl-cert
+  backend:
+    serviceName: kibana-oauth2-proxy
+    servicePort: 4180

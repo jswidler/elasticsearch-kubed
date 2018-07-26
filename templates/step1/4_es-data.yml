@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ namespace }}
+  name: elasticsearch-data
+  labels:
+    app: elasticsearch
+    role: data
+spec:
+  serviceName: elasticsearch-data
+  # This is number of nodes that we want to run
+  replicas: {{ data_node.replicas }}
+  selector:
+    matchLabels:
+      app: elasticsearch
+      role: data
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        role: data
+    spec:
+      terminationGracePeriodSeconds: 300
+
+      # spec.template.spec.initContainers
+      initContainers:
+        # Fix the permissions on the volume.
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_notes_for_production_use_and_defaults
+        - name: fix-the-volume-permission
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+        # Increase the default vm.max_map_count to 262144
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
+        - name: increase-the-vm-max-map-count
+          image: busybox
+          command: ['sysctl', '-w', 'vm.max_map_count=262144']
+          securityContext:
+            privileged: true
+        # Increase the ulimit
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_notes_for_production_use_and_defaults
+        - name: increase-the-ulimit
+          image: busybox
+          command: ['sh', '-c', 'ulimit -n 65536']
+          securityContext:
+            privileged: true
+
+      # spec.template.spec.containers
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport
+          livenessProbe:
+            tcpSocket:
+              port: transport
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: http
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+          resources:
+            limits:
+              memory: {{ data_node.memory_limit }}
+
+          # spec.template.spec.containers[elasticsearch].env
+          env:
+            - name: discovery.zen.ping.unicast.hosts
+              value: "elasticsearch-master.{{ namespace }}.svc.cluster.local,elasticsearch.{{ namespace }}.svc.cluster.local"
+            - name: ES_JAVA_OPTS
+              value: -Xms{{ data_node.heap_size }} -Xmx{{ data_node.heap_size }}
+
+            - name: node.master
+              value: "false"
+            - name: node.ingest
+              value: "false"
+            - name: node.data
+              value: "true"
+            - name: search.remote.connect
+              value: "true"
+
+            - name: cluster.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          # spec.template.spec.containers[elasticsearch].volumeMounts
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+
+  # spec.volumeClaimTemplates
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ data_node.storage_class }}
+        resources:
+          requests:
+            storage: {{ data_node.volume_size }}Gi

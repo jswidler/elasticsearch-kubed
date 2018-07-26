@@ -1,0 +1,51 @@
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: {{ namespace }}
+  name: logstash
+spec:
+  type: LoadBalancer
+  selector:
+    app: logstash
+  ports:
+    - name: beats
+      port: {{ logstash_beats_port }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ namespace }}
+  name: logstash
+  labels:
+    app: logstash
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash-oss:6.3.1
+          ports:
+            - containerPort: {{ logstash_beats_port }}
+          volumeMounts:
+            - name: logstash-pipelines
+              mountPath: /usr/share/logstash/pipeline
+            - name: logstash-tls
+              mountPath: /usr/share/logstash/ssl
+
+      # spec.template.spec.volumes
+      volumes:
+        - name: logstash-pipelines
+          configMap:
+            name: logstash-pipelines
+        - name: logstash-tls
+          secret:
+            secretName: logstash-tls

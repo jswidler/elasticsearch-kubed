@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ namespace }}
+  name: logstash-pipelines
+data:
+{% macro inc(str) %}{% include str %}{% endmacro %}
+  logstash.conf: |
+{{ inc('step2/logstash/logstash.conf')|indent(first=true) }}
