@@ -21,15 +21,3 @@ spec:
     matchLabels:
       app: elasticsearch
       role: master
----
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  namespace: {{ namespace }}
-  name: elasticsearch-ingest
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app: elasticsearch
-      role: ingest

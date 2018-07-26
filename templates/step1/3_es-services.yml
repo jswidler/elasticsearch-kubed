@@ -35,22 +35,3 @@ spec:
       name: http
     - port: 9300
       name: node-to-node
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: {{ namespace }}
-  name: elasticsearch-ingest
-  labels:
-    app: elasticsearch
-    role: ingest
-spec:
-  clusterIP: None
-  selector:
-    app: elasticsearch
-    role: ingest
-  ports:
-    - port: 9200
-      name: http
-    - port: 9300
-      name: node-to-node

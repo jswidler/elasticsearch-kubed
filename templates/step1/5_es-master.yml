@@ -69,9 +69,7 @@ spec:
               value: "false"
 
             - name: cluster.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: {{ cluster_name }}
             - name: node.name
               valueFrom:
                 fieldRef:

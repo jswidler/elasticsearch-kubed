@@ -25,28 +25,28 @@ def gen_logstash_certs(cert_dir):
     if not check_cert_presence(cert_dir):
         print("Setting up logstash with TLS authenication requires private keys and public certificates.")
         print("To generate the certificates, provide the following information: ")
-        ca_name = prompt("Certificate Authority Name (default: 'Logstash CA'): ", default='Logstash CA')
-        url = prompt("CN - Logstash Common Name (default: 'logstash.my-domain.com'): ",
+        ca_name = prompt("Certificate Authority Name", default='Logstash CA')
+        url = prompt("CN - Logstash Common Name",
             regex='^[a-zA-Z.-0-9]+$',
             default='logstash.my-domain.com'
         )
-        country = prompt("C - Country Code (default: 'US'): ",
+        country = prompt("C - Country Code",
             regex='[A-Z]{1,4}',
             default='US'
         )
-        state = prompt("ST - State (default: 'CA'): ",
+        state = prompt("ST - State",
             regex='[A-Z]{1,4}',
             default='CA'
         )
-        loc = prompt("L - Loc / City (default: 'San Francisco'): ",
+        loc = prompt("L - Location",
             regex='[A-Za-z 0-9-_.]+',
             default='San Francisco'
         )
-        org = prompt("O - Org (default: 'Acme'): ",
+        org = prompt("O - Org",
             regex='[A-Za-z 0-9-_.]+',
             default='Acme'
         )
-        org_unit = prompt("OU - Org Unit (default: 'Computers'): ",
+        org_unit = prompt("OU - Org Unit",
             regex='[A-Za-z 0-9-_.]+',
             default='Computers'
         )
@@ -63,8 +63,9 @@ def gen_logstash_certs(cert_dir):
 
 def prompt_for_user_vars():
     context = {}
-    context['namespace'] = prompt('Enter the same namespace from step 1: ',
-        '^[a-z][-a-z0-9]{1,19}$')
+    context['namespace'] = prompt('Enter the same namespace from step 1',
+        '^[a-z][-a-z0-9]{1,19}$',
+        'my-es-cluster')
     context['logstash_beats_port'] = '8751'
     cert_dir = os.path.join(clusters_dir, context['namespace'], "step2", "self-signed-certs")
     gen_logstash_certs(cert_dir)

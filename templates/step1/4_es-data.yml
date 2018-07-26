@@ -83,16 +83,14 @@ spec:
             - name: node.master
               value: "false"
             - name: node.ingest
-              value: "false"
+              value: "true"
             - name: node.data
               value: "true"
             - name: search.remote.connect
               value: "true"
 
             - name: cluster.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: {{ cluster_name }}
             - name: node.name
               valueFrom:
                 fieldRef:

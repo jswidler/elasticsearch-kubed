@@ -13,17 +13,18 @@ jinja_env.filters['b64encode'] = base64
 
 def prompt_for_user_vars():
     context = {}
-    context['namespace'] = prompt('Enter the same namespace from step 1: ',
-        '^[a-z][-a-z0-9]{1,19}$')
-    context['github_org'] = prompt('Enter the GitHub org: ')
-    context['github_team'] = prompt('Enter the GitHub team: ')
-    context['oauth_client_id'] = prompt('Enter the OAuth Client ID: ')
-    context['oauth_client_secret'] = prompt('Enter the OAuth Client Secret: ')
+    context['namespace'] = prompt('Enter the same namespace from step 1',
+        '^[a-z][-a-z0-9]{1,19}$',
+        'my-es-cluster')
+    context['github_org'] = prompt('Enter the GitHub org')
+    context['github_team'] = prompt('Enter the GitHub team')
+    context['oauth_client_id'] = prompt('Enter the OAuth Client ID')
+    context['oauth_client_secret'] = prompt('Enter the OAuth Client Secret')
     context['oauth_cookie_name'] = '_ghoauth'
     context['oauth_cookie_secret'] = random_token()
 
-    context['ssl_crt'] = prompt('Enter the path to the SSL certificate: ', readFile=True)
-    context['ssl_key'] = prompt('Enter the path to the SSL private key: ', readFile=True)
+    context['ssl_crt'] = prompt('Enter the path to the SSL certificate', readFile=True)
+    context['ssl_key'] = prompt('Enter the path to the SSL private key', readFile=True)
 
     return context
 
