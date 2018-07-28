@@ -15,7 +15,7 @@ def prompt_for_user_vars():
     context = {}
     context['namespace'] = prompt('Enter the same namespace from step 1',
         '^[a-z][-a-z0-9]{1,19}$',
-        'my-es-cluster')
+        'default')
     context['github_org'] = prompt('Enter the GitHub org')
     context['github_team'] = prompt('Enter the GitHub team')
     context['oauth_client_id'] = prompt('Enter the OAuth Client ID')

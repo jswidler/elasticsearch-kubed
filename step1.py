@@ -39,7 +39,7 @@ def prompt_for_user_vars():
     context['namespace'] = prompt(
         'Enter a kubernetes namespace for the elasticsearch cluster',
         '^[a-z][-a-z0-9]{1,19}$',
-        'my-es-cluster'
+        'default'
     )
     context['cluster_name'] = prompt(
         'Enter a name for the elasticsearch cluster',

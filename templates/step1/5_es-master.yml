@@ -85,3 +85,15 @@ spec:
         - name: storage
           emptyDir:
             medium: ""
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ namespace }}
+  name: elasticsearch-master
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+      role: master

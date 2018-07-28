@@ -11,9 +11,7 @@ spec:
   ports:
     - port: 5601
       name: http
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:

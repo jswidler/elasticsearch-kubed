@@ -65,7 +65,7 @@ def prompt_for_user_vars():
     context = {}
     context['namespace'] = prompt('Enter the same namespace from step 1',
         '^[a-z][-a-z0-9]{1,19}$',
-        'my-es-cluster')
+        'default')
     context['logstash_beats_port'] = '8751'
     cert_dir = os.path.join(clusters_dir, context['namespace'], "step2", "self-signed-certs")
     gen_logstash_certs(cert_dir)
