@@ -20,4 +20,4 @@ spec:
   selector:
     matchLabels:
       app: elasticsearch
-      role: master
+      role: data

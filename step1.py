@@ -50,7 +50,7 @@ def prompt_for_user_vars():
     print('Select the node size: ')
     for i, key in enumerate(data_node_configs):
         print(f'{i+1}: {key}')
-    config_count = len(data_node_configs)  # Will break regex if > 10
+    config_count = len(data_node_configs)  # Will break regex if > 9 configs
     node_size_choice = int(prompt(
         f'[1-{config_count}]: ',
         f'^[1-{config_count}]$',
