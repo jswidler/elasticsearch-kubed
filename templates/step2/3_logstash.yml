@@ -10,9 +10,7 @@ spec:
   ports:
     - name: beats
       port: {{ logstash_beats_port }}
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:

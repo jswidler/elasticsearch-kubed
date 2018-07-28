@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ namespace }}
+  name: filebeat-dashboard-init
+spec:
+  template:
+    spec:
+      containers:
+      - name: filebeat-template-init
+        image: docker.elastic.co/beats/filebeat:6.3.2
+        command: [ "filebeat", "setup", "--dashboards",
+          "-E", "output.logstash.enabled=false",
+          "-E", 'output.elasticsearch.hosts=["elasticsearch.{{ namespace }}.svc.cluster.local:9200"]',
+          "-E", 'setup.kibana.host="kibana.{{ namespace }}.svc.cluster.local:5601"' ]
+      restartPolicy: Never
+  backoffLimit: 4

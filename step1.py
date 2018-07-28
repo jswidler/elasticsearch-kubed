@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from util import prompt
+from util import prompt, ensure_dir
 import os
 import re
 from jinja2 import Environment, FileSystemLoader
@@ -77,17 +77,14 @@ def main():
 
     context = prompt_for_user_vars()
     cluster_dir = os.path.join(clusters_dir, context['namespace'])
-    step_dir = os.path.join(cluster_dir, "step1")
-    try:
-        os.makedirs(step_dir)
-    except FileExistsError:
-        pass
-    for template in jinja_env.list_templates(filter_func=(lambda x:re.match('^step1/[0-9][^/]+$', x))):
+    for template in jinja_env.list_templates(filter_func=(lambda x:re.match('^step1/[0-9].+\.yml$', x))):
         output = jinja_env.get_template(template).render(context)
-        with open(os.path.join(cluster_dir, template), 'w') as output_file:
+        out_path = os.path.join(cluster_dir, template[6:]) # 6 = len("step1/")
+        ensure_dir(out_path)
+        with open(out_path, 'w') as output_file:
             print(output, file=output_file)
     print('\nSuccessfully generated cluster files.')
-    print(f'configuration files have been saved to {step_dir}')
+    print(f'configuration files have been saved to {cluster_dir}')
 
 
 if __name__ == "__main__":

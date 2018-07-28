@@ -14,20 +14,3 @@ spec:
           "-E", 'output.elasticsearch.hosts=["elasticsearch.{{ namespace }}.svc.cluster.local:9200"]' ]
       restartPolicy: Never
   backoffLimit: 4
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  namespace: {{ namespace }}
-  name: filebeat-template-init
-spec:
-  template:
-    spec:
-      containers:
-      - name: filebeat-template-init
-        image: docker.elastic.co/beats/filebeat:6.3.2
-        command: [ "filebeat", "setup", "--template",
-          "-E", "output.logstash.enabled=false",
-          "-E", 'output.elasticsearch.hosts=["elasticsearch.{{ namespace }}.svc.cluster.local:9200"]' ]
-      restartPolicy: Never
-  backoffLimit: 4
