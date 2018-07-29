@@ -14,12 +14,46 @@ spec:
     matchLabels:
       app: elasticsearch
       role: data
+  affinity:
+    # Try to put each ES data node on a different node in the K8s cluster
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - elasticsearch
+              - key: role
+                operator: In
+                values:
+                  - data
+            topologyKey: kubernetes.io/hostname
   template:
     metadata:
       labels:
         app: elasticsearch
         role: data
     spec:
+      affinity:
+        # Try to put each ES data node on a different node in the K8s cluster
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - elasticsearch
+                  - key: role
+                    operator: In
+                    values:
+                      - data
+                topologyKey: kubernetes.io/hostname
       terminationGracePeriodSeconds: 300
 
       # spec.template.spec.initContainers

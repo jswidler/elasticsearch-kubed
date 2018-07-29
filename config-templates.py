@@ -48,12 +48,13 @@ def check_cert_presence(cert_dir):
 
 def prompt_for_logstash_certs(context, cert_dir):
     if check_cert_presence(cert_dir):
+        print(f"Using keys and certs for Logstash found in {cert_dir}.")
         context['skip_logstash'] = False
     else:
         do_logstash = prompt("Would you like to set up Logstash (with SSL beats input)? (Y/n)",
             "^[yYnN]?$"
         )
-        if do_logstash and do_logstash.lower() is not 'y':
+        if do_logstash and do_logstash.lower() != 'y':
             context['skip_logstash'] = True
             return
         else:
@@ -102,7 +103,7 @@ def prompt_for_oauth_config(context):
     do_oauth = prompt("Would you like to configure oauth-proxy to authorize a GitHub team? (y/N)",
         "^[yYnN]?$"
     )
-    if not do_oauth or do_oauth.lower() is not 'y':
+    if not do_oauth or do_oauth.lower() != 'y':
         context['skip_oauth'] = True
         return
     else:
@@ -142,7 +143,7 @@ def do_prompts():
         context['data_node']['replicas'] = int(prompt(
             'Enter the number of nodes (2-9)',
             '^[2-9]$',
-            '3'
+            '2'
         ))
     context['data_node']['volume_size'] = prompt(
         'Enter the data volume size in GB [10-9999]',
