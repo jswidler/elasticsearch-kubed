@@ -53,7 +53,7 @@ def prompt_for_logstash_certs(context, cert_dir):
         do_logstash = prompt("Would you like to set up Logstash (with SSL beats input)? (Y/n)",
             "^[yYnN]?$"
         )
-        if do_logstash and do_logstash.lower() != 'y':
+        if do_logstash and do_logstash.lower() is not 'y':
             context['skip_logstash'] = True
             return
         else:
@@ -102,13 +102,13 @@ def prompt_for_oauth_config(context):
     do_oauth = prompt("Would you like to configure oauth-proxy to authorize a GitHub team? (y/N)",
         "^[yYnN]?$"
     )
-    if not do_oauth or do_oauth.lower() != 'y':
+    if not do_oauth or do_oauth.lower() is not 'y':
         context['skip_oauth'] = True
         return
     else:
         context['skip_oauth'] = False
-    context['github_org'] = prompt('Enter the GitHub org', '^[a-z0-9-]+$')
-    context['github_team'] = prompt('Enter the GitHub team', '^[a-z0-9-]+$')
+    context['github_org'] = prompt('Enter the GitHub org', '^[a-z0-9-_]+$')
+    context['github_team'] = prompt('Enter the GitHub team', '^[a-z0-9-_]+$')
     context['oauth_client_id'] = prompt('Enter the OAuth Client ID', '^[a-z0-9-]+$')
     context['oauth_client_secret'] = prompt('Enter the OAuth Client Secret', '^[a-z0-9-]+$')
     context['oauth_cookie_name'] = '_ghoauth'
@@ -161,6 +161,10 @@ def main():
     do_logstash = '' if context['skip_logstash'] else '6'
     do_oauth_proxy = '' if context['skip_oauth'] else '7'
     for template in jinja_env.list_templates(filter_func=(lambda x:re.match(f'^[1-5{do_logstash}{do_oauth_proxy}]_.+\.yml$', x))):
+        if context['namespace'] is 'default' and template.endswith('/namespace.yml'):
+            continue
+        if context['data_node']['storage_class'] is 'standard' and template.endswith('-storage.yml'):
+            continue
         output = jinja_env.get_template(template).render(context)
         out_path = os.path.join(cluster_dir, template)
         ensure_dir(out_path)
