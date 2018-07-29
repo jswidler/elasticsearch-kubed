@@ -6,4 +6,4 @@ metadata:
 data:
 {% macro inc(str) %}{% include str %}{% endmacro %}
   logstash.conf: |
-{{ inc('step2/logstash/logstash.conf')|indent(first=true) }}
+{{ inc('6_logstash/logstash.conf')|indent(first=true) }}

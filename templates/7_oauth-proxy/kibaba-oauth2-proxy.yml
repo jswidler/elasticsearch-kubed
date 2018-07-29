@@ -12,9 +12,7 @@ spec:
   ports:
     - port: 4180
       name: http
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
