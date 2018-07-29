@@ -109,7 +109,7 @@ def prompt_for_oauth_config(context):
     else:
         context['skip_oauth'] = False
     context['github_org'] = prompt('Enter the GitHub org', '^[a-z0-9-_]+$')
-    context['github_team'] = prompt('Enter the GitHub team', '^[a-z0-9-_]+$')
+    context['github_team'] = prompt('Enter the GitHub team (optional)', '^[a-z0-9-_]*$')
     context['oauth_client_id'] = prompt('Enter the OAuth Client ID', '^[a-z0-9-]+$')
     context['oauth_client_secret'] = prompt('Enter the OAuth Client Secret', '^[a-z0-9-]+$')
     context['oauth_cookie_name'] = '_ghoauth'
