@@ -5,7 +5,6 @@ metadata:
   name: kibana-oauth2-proxy-ingress
   annotations:
     kubernetes.io/ingress.allow-http: "false"
-    ingress.beta.kubernetes.io/health-check-path: "/ping"
 spec:
   tls:
     - secretName:  ssl-cert

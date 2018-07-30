@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
+  namespace: {{ namespace }}
   name: ssl-cert
 type: Opaque
 data:

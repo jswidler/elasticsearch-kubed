@@ -34,7 +34,17 @@ spec:
         - name: kibana-oauth2-proxy
           image: machinedata/oauth2_proxy
           ports:
-            - containerPort: 4180
+            - name: http
+              containerPort: 4180
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 5
           env:
             - name: OAUTH2_PROXY_PROVIDER
               value: github

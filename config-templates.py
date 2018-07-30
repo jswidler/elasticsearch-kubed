@@ -100,7 +100,7 @@ def prompt_for_logstash_certs(context, cert_dir):
     context['logstash_beats_port'] = '8751'
 
 def prompt_for_oauth_config(context):
-    do_oauth = prompt("Would you like to configure oauth-proxy to authorize a GitHub team? (y/N)",
+    do_oauth = prompt("Would you like to configure oauth2_proxy to authorize a GitHub team? (y/N)",
         "^[yYnN]?$"
     )
     if not do_oauth or do_oauth.lower() != 'y':
