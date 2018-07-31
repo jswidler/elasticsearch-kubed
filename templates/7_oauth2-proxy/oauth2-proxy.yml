@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ namespace }}
+  name: oauth2-proxy
+  labels:
+    app: oauth2-proxy
+spec:
+  selector:
+    app: oauth2-proxy
+  type: LoadBalancer
+  ports:
+    - port: 443
+      targetPort: 4433
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ namespace }}
+  name: oauth2-proxy
+  labels:
+    app: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+    spec:
+      containers:
+        - name: oauth2-proxy
+          image: machinedata/oauth2_proxy:2.2
+          ports:
+            - name: https
+              containerPort: 4433
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+              scheme: HTTPS
+          volumeMounts:
+            - name: oauth2-config
+              mountPath: /conf
+      # spec.template.spec.volumes
+      volumes:
+        - name: oauth2-config
+          secret:
+            secretName: oauth2-config
