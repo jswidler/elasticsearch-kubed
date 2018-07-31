@@ -2,12 +2,12 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   namespace: {{ namespace }}
-  name: kibana-oauth2-proxy-ingress
+  name: oauth2-proxy-ingress
   annotations:
     kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
     - secretName:  ssl-cert
   backend:
-    serviceName: kibana-oauth2-proxy
+    serviceName: oauth2-proxy
     servicePort: 4180
