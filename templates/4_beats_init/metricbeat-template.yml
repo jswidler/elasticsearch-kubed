@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: metricbeat-template-init
-        image: docker.elastic.co/beats/metricbeat:6.3.2
+        image: docker.elastic.co/beats/metricbeat:6.4.2
         command: [ "metricbeat", "setup", "--template",
           "-E", "output.logstash.enabled=false",
           "-E", 'output.elasticsearch.hosts=["elasticsearch.{{ namespace }}.svc.cluster.local:9200"]' ]

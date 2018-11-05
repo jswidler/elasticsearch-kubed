@@ -48,7 +48,7 @@ spec:
       # spec.template.spec.containers
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
+          image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
           ports:
             - containerPort: 9200
               name: http
@@ -95,9 +95,16 @@ spec:
           volumeMounts:
             - name: storage
               mountPath: /usr/share/elasticsearch/data
+            - name: config
+              # This path seems likely to break, but $JAVA_HOME doesn't work
+              mountPath: /opt/jdk-10.0.2/lib/security/java.security
+              subPath: java.security
 
-      # spec.template.spec.volumes
+      # spec.template.spec
       volumes:
+        - name: config
+          configMap:
+            name: es-config
         - name: storage
           emptyDir:
             medium: ""

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: default
+  name: es-config
+data:
+  java.security: |
+    networkaddress.cache.ttl=60
