@@ -15,7 +15,8 @@ function make_ca {
 }
 
 function make_key_and_csr {
-  openssl genrsa -out $1.key 2048
+  openssl genrsa -out $1.pem 2048
+  openssl pkcs8 -in $1.pem -topk8 -nocrypt -out $1.key
   openssl req -new -key $1.key -out $1.csr -subj "/C=$COUNTRY/ST=$STATE/L=$LOC/O=$ORG/OU=$ORG_UNIT/CN=$2"
 }
 
