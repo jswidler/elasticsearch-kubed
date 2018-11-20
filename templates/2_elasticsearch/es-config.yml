@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: default
+  namespace: {{ namespace }}
   name: es-config
 data:
   java.security: |
