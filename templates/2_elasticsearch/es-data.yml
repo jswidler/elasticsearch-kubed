@@ -69,7 +69,7 @@ spec:
       # spec.template.spec.containers
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+          image: docker.elastic.co/elasticsearch/elasticsearch:6.5.2
           ports:
             - containerPort: 9200
               name: http
