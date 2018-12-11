@@ -119,7 +119,7 @@ spec:
               mountPath: /usr/share/elasticsearch/data
             - name: config
               # This path seems likely to break, but $JAVA_HOME doesn't work
-              mountPath: /opt/jdk-10.0.2/lib/security/java.security
+              mountPath: /opt/jdk-11.0.1/lib/security/java.security
               subPath: java.security
 
       # spec.template.spec
