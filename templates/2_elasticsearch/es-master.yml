@@ -1,12 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: {{ namespace }}
   name: elasticsearch-master
   labels:
-    component: elasticsearch
+    app: elasticsearch
     role: master
 spec:
+  serviceName: elasticsearch-master
   replicas: 3
   selector:
     matchLabels:
@@ -48,7 +49,7 @@ spec:
       # spec.template.spec.containers
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:6.5.2
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.0.0
           ports:
             - containerPort: 9200
               name: http
@@ -68,13 +69,13 @@ spec:
 
           # spec.template.spec.containers[elasticsearch].env
           env:
-            - name: discovery.zen.ping.unicast.hosts
-              value: "elasticsearch-master.{{ namespace }}.svc.cluster.local,elasticsearch.{{ namespace }}.svc.cluster.local"
+            - name: discovery.seed_hosts
+              value: "elasticsearch-master.{{ namespace }}.svc.cluster.local"
+            - name: cluster.initial_master_nodes
+              value: "elasticsearch-master-0,elasticsearch-master-1,elasticsearch-master-2"
             - name: ES_JAVA_OPTS
               value: -Xms512m -Xmx512m
 
-            - name: discovery.zen.minimum_master_nodes
-              value: "2"
             - name: node.master
               value: "true"
             - name: node.ingest
@@ -93,11 +94,10 @@ spec:
 
           # spec.template.spec.containers[elasticsearch].volumeMounts
           volumeMounts:
-            - name: storage
+            - name: data
               mountPath: /usr/share/elasticsearch/data
             - name: config
-              # This path seems likely to break, but $JAVA_HOME doesn't work
-              mountPath: /opt/jdk-11.0.1/lib/security/java.security
+              mountPath: /usr/share/elasticsearch/jdk/lib/security/java.security
               subPath: java.security
 
       # spec.template.spec
@@ -105,9 +105,18 @@ spec:
         - name: config
           configMap:
             name: es-config
-        - name: storage
-          emptyDir:
-            medium: ""
+
+  # spec.volumeClaimTemplates
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        storageClassName: {{ data_node.storage_class }}
+        resources:
+          requests:
+            storage: 10Gi
 ---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
