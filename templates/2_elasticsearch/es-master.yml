@@ -38,11 +38,28 @@ spec:
                 topologyKey: kubernetes.io/hostname
       # spec.template.spec.initContainers
       initContainers:
+        # Fix the permissions on the volume.
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_notes_for_production_use_and_defaults
+        - name: fix-the-volume-permission
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
         # Increase the default vm.max_map_count to 262144
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
         - name: increase-the-vm-max-map-count
           image: busybox
           command: ['sysctl', '-w', 'vm.max_map_count=262144']
+          securityContext:
+            privileged: true
+        # Increase the ulimit
+        # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_notes_for_production_use_and_defaults
+        - name: increase-the-ulimit
+          image: busybox
+          command: ['sh', '-c', 'ulimit -n 65536']
           securityContext:
             privileged: true
 
