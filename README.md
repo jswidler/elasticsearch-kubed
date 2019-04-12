@@ -10,6 +10,8 @@ There is a blog post that walks people through setting up an ES cluster using th
 
 [High Performance ELK with Kubernetes](https://engineering.udacity.com/high-performance-elk-with-kubernetes-part-1-1d09f41a4ce2)
 
+Note that the blog post was originally written for ES 6.3, while this repo has been updated several times to use newer versions of the Elastic Stack.  I don't think there is anything in the blog post that needs to be updated as a result of updates.  However, if you come across something confusing in the blog post, perhaps as a result of the updates to this repo, please open a GitHub issue to let me know about it.
+
 ### minikube
 
 To test the configuration on MaxOS X, `minikube` can be installed to launch a local one node Kubernetes cluster.  When starting minikube, increase the default machine size:
