@@ -54,10 +54,14 @@ metadata:
   labels:
     k8s-app: filebeat
 spec:
+  selector:
+    matchLabels:
+      name: filebeat
   template:
     metadata:
       labels:
         k8s-app: filebeat
+        name: filebeat
     spec:
       serviceAccountName: filebeat
       terminationGracePeriodSeconds: 30
