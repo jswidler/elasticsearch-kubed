@@ -1,3 +1,5 @@
+NOTE: Archived.  Since this was written, many releases of Elastic have happened.  With them is included authorization and helm scripts for installing on Kubernetes, which was not available when this was written.  The information in this guide is outdated.
+
 # Elasticsearch-Kubed
 
 The purpose of this project is to provide starter files for deploying a high performance Elasticsearch cluster on Kubernetes running on either GCP or AWS.  
